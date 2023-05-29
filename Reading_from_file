@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    char filename[100];
+
+    printf("Enter the filename: ");
+    scanf("%s", filename);
+
+    FILE *file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    fseek(file, 0, SEEK_END);  // Move the file pointer to the end of the file
+    long file_size = ftell(file);  // Get the size of the file
+    rewind(file);  // Reset the file pointer to the beginning of the file
+
+    char *code = (char *)malloc(file_size + 1);  // Allocate memory to store the code
+    fread(code, file_size, 1, file);  // Read the entire file into the code buffer
+    code[file_size] = '\0';  // Null-terminate the code buffer
+
+    fclose(file);
+
+    // Execute the code
+    printf("Executing code from file '%s':\n", filename);
+    system(code);
+
+    free(code);
+
+    return 0;
